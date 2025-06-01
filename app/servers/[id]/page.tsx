@@ -4,61 +4,66 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ServerActions } from '@/components/server-actions'
-import { 
-  Users, Globe, Calendar, ExternalLink, Flag, 
-  MessageSquare, Share, ChevronLeft 
+import {
+  Users, Globe, Calendar, ExternalLink, Flag,
+  MessageSquare, Share, ChevronLeft
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
-// This would typically fetch from Supabase
-async function getServer(id: string) {
-  // Mock data for development
-  const demoServers = [
-    {
-      id: '1',
-      name: 'GamersHub',
-      description: 'The ultimate community for gamers of all types. Join discussions, find teammates, and share your gaming moments. We host regular tournaments, game nights, and have channels for all popular games including Minecraft, Fortnite, Valorant, League of Legends, and more. Our community is friendly and welcoming to gamers of all skill levels and backgrounds.',
-      tags: ['Gaming', 'Esports', 'Streaming'],
-      member_count: 15420,
-      icon_url: 'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      banner_url: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      invite_link: 'https://discord.gg/example',
-      language: 'English',
-      region: 'Global',
-      created_at: '2023-08-15T00:00:00Z',
-      last_bumped_at: new Date().toISOString(),
-      is_verified: true
-    },
-    {
-      id: '2',
-      name: 'Anime Lounge',
-      description: 'Discuss your favorite anime series, share fan art, and join watch parties with fellow anime enthusiasts. We have channels for seasonal anime, classics, manga discussions, and fan creations. Join our weekly watch parties and seasonal anime discussions!',
-      tags: ['Anime', 'Manga', 'Japanese Culture'],
-      member_count: 8750,
-      icon_url: 'https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      banner_url: 'https://images.pexels.com/photos/7233352/pexels-photo-7233352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      invite_link: 'https://discord.gg/example',
-      language: 'English',
-      region: 'Global',
-      created_at: '2023-09-20T00:00:00Z',
-      last_bumped_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      is_verified: false
-    }
-  ];
-  
-  const server = demoServers.find(s => s.id === id);
-  if (!server) return null;
-  
-  return server;
+// === MOCK DATA ===
+const demoServers = [
+  {
+    id: '1',
+    name: 'GamersHub',
+    description: 'The ultimate community for gamers of all types...',
+    tags: ['Gaming', 'Esports', 'Streaming'],
+    member_count: 15420,
+    icon_url: 'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    banner_url: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    invite_link: 'https://discord.gg/example',
+    language: 'English',
+    region: 'Global',
+    created_at: '2023-08-15T00:00:00Z',
+    last_bumped_at: new Date().toISOString(),
+    is_verified: true
+  },
+  {
+    id: '2',
+    name: 'Anime Lounge',
+    description: 'Discuss your favorite anime series...',
+    tags: ['Anime', 'Manga', 'Japanese Culture'],
+    member_count: 8750,
+    icon_url: 'https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    banner_url: 'https://images.pexels.com/photos/7233352/pexels-photo-7233352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    invite_link: 'https://discord.gg/example',
+    language: 'English',
+    region: 'Global',
+    created_at: '2023-09-20T00:00:00Z',
+    last_bumped_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    is_verified: false
+  }
+]
+
+// === STATIC PARAMS GENERATOR ===
+export async function generateStaticParams() {
+  return demoServers.map(server => ({
+    id: server.id,
+  }))
 }
 
+// === FETCH DATA FOR PAGE ===
+async function getServer(id: string) {
+  return demoServers.find(s => s.id === id) || null
+}
+
+// === PAGE COMPONENT ===
 export default async function ServerPage({ params }: { params: { id: string } }) {
-  const server = await getServer(params.id);
-  
+  const server = await getServer(params.id)
+
   if (!server) {
-    notFound();
+    notFound()
   }
-  
+
   return (
     <>
       {/* Banner */}
@@ -72,7 +77,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
       </div>
-      
+
       <div className="container relative">
         {/* Server Icon */}
         <div className="absolute -top-16 left-4 h-32 w-32 overflow-hidden rounded-2xl border-4 border-background bg-muted md:-top-20 md:left-8 md:h-40 md:w-40">
@@ -90,7 +95,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
             </div>
           )}
         </div>
-        
+
         {/* Back Button */}
         <div className="pt-4">
           <Button variant="ghost" size="sm" asChild>
@@ -100,7 +105,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
             </Link>
           </Button>
         </div>
-        
+
         <div className="mt-16 md:mt-20 md:pl-44 lg:pl-48">
           {/* Header */}
           <div className="flex flex-col-reverse gap-4 md:flex-row md:items-start md:justify-between">
@@ -112,7 +117,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
-                {server.tags.map((tag: string, i: number) => (
+                {server.tags.map((tag, i) => (
                   <Badge key={i} variant="outline">
                     {tag}
                   </Badge>
@@ -129,9 +134,9 @@ export default async function ServerPage({ params }: { params: { id: string } })
               <ServerActions serverId={server.id} />
             </div>
           </div>
-          
+
           <Separator className="my-6" />
-          
+
           {/* Main Content */}
           <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2 space-y-6">
@@ -142,7 +147,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-6">
               <div className="rounded-lg border bg-card p-4 text-card-foreground">
                 <h3 className="mb-3 font-semibold">Server Info</h3>
@@ -170,7 +175,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
                   </div>
                 </div>
               </div>
-              
+
               <div className="rounded-lg border">
                 <div className="p-4">
                   <Button className="w-full" asChild>
