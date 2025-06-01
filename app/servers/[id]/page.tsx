@@ -18,8 +18,8 @@ const demoServers = [
     description: 'The ultimate community for gamers of all types...',
     tags: ['Gaming', 'Esports', 'Streaming'],
     member_count: 15420,
-    icon_url: 'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    banner_url: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    icon_url: 'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg',
+    banner_url: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg',
     invite_link: 'https://discord.gg/example',
     language: 'English',
     region: 'Global',
@@ -33,8 +33,8 @@ const demoServers = [
     description: 'Discuss your favorite anime series...',
     tags: ['Anime', 'Manga', 'Japanese Culture'],
     member_count: 8750,
-    icon_url: 'https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    banner_url: 'https://images.pexels.com/photos/7233352/pexels-photo-7233352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    icon_url: 'https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg',
+    banner_url: 'https://images.pexels.com/photos/7233352/pexels-photo-7233352.jpeg',
     invite_link: 'https://discord.gg/example',
     language: 'English',
     region: 'Global',
@@ -51,7 +51,7 @@ export async function generateStaticParams() {
   }))
 }
 
-// === FETCH DATA FOR PAGE ===
+// === FETCH FUNCTION ===
 async function getServer(id: string) {
   return demoServers.find(s => s.id === id) || null
 }
@@ -60,9 +60,7 @@ async function getServer(id: string) {
 export default async function ServerPage({ params }: { params: { id: string } }) {
   const server = await getServer(params.id)
 
-  if (!server) {
-    notFound()
-  }
+  if (!server) notFound()
 
   return (
     <>
@@ -80,13 +78,9 @@ export default async function ServerPage({ params }: { params: { id: string } })
 
       <div className="container relative">
         {/* Server Icon */}
-        <div className="absolute -top-16 left-4 h-32 w-32 overflow-hidden rounded-2xl border-4 border-background bg-muted md:-top-20 md:left-8 md:h-40 md:w-40">
+        <div className="absolute -top-16 left-4 h-32 w-32 rounded-2xl border-4 border-background bg-muted md:-top-20 md:left-8 md:h-40 md:w-40 overflow-hidden">
           {server.icon_url ? (
-            <img
-              src={server.icon_url}
-              alt={server.name}
-              className="h-full w-full object-cover"
-            />
+            <img src={server.icon_url} alt={server.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-primary/20">
               <span className="text-4xl font-bold text-primary">
@@ -118,9 +112,7 @@ export default async function ServerPage({ params }: { params: { id: string } })
               </div>
               <div className="flex flex-wrap gap-2">
                 {server.tags.map((tag, i) => (
-                  <Badge key={i} variant="outline">
-                    {tag}
-                  </Badge>
+                  <Badge key={i} variant="outline">{tag}</Badge>
                 ))}
               </div>
             </div>
@@ -152,27 +144,9 @@ export default async function ServerPage({ params }: { params: { id: string } })
               <div className="rounded-lg border bg-card p-4 text-card-foreground">
                 <h3 className="mb-3 font-semibold">Server Info</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-muted-foreground">
-                      <Users className="mr-2 h-4 w-4" />
-                      <span>Members</span>
-                    </div>
-                    <span>{server.member_count.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-muted-foreground">
-                      <Globe className="mr-2 h-4 w-4" />
-                      <span>Language</span>
-                    </div>
-                    <span>{server.language}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-muted-foreground">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>Added</span>
-                    </div>
-                    <span>{formatDistanceToNow(new Date(server.created_at), { addSuffix: true })}</span>
-                  </div>
+                  <InfoRow icon={<Users />} label="Members" value={server.member_count.toLocaleString()} />
+                  <InfoRow icon={<Globe />} label="Language" value={server.language} />
+                  <InfoRow icon={<Calendar />} label="Added" value={formatDistanceToNow(new Date(server.created_at), { addSuffix: true })} />
                 </div>
               </div>
 
@@ -203,5 +177,18 @@ export default async function ServerPage({ params }: { params: { id: string } })
         </div>
       </div>
     </>
+  )
+}
+
+// === SMALL COMPONENT ===
+function InfoRow({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center text-muted-foreground">
+        <span className="mr-2">{icon}</span>
+        <span>{label}</span>
+      </div>
+      <span>{value}</span>
+    </div>
   )
 }
