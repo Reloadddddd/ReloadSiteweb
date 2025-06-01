@@ -6,7 +6,7 @@ declare module "next-auth" {
       id: string;
       discord_id: string;
       username: string;
-      avatar_url?: string;
+      avatar_url: string | null;
       role: 'admin' | 'user';
     };
   }
@@ -15,7 +15,7 @@ declare module "next-auth" {
     id: string;
     discord_id: string;
     username: string;
-    avatar_url?: string;
+    avatar_url: string | null;
     role: 'admin' | 'user';
   }
 }
