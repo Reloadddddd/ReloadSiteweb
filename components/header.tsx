@@ -1,24 +1,24 @@
-"use client"
+'use client'
 
 import Link from 'next/link'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { 
-  NavigationMenu, 
-  NavigationMenuContent, 
-  NavigationMenuItem, 
-  NavigationMenuLink, 
-  NavigationMenuList, 
-  NavigationMenuTrigger 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
 } from '@/components/ui/navigation-menu'
 import { Search, Menu, Plus, User, LogOut, Settings } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -45,6 +45,7 @@ export function Header() {
             </svg>
             <span className="hidden font-bold sm:inline-block">Discord Directory</span>
           </Link>
+
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -70,6 +71,7 @@ export function Header() {
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -98,6 +100,7 @@ export function Header() {
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+
               <NavigationMenuItem>
                 <Link href="/how-it-works" legacyBehavior passHref>
                   <NavigationMenuLink className="font-medium">
@@ -108,7 +111,7 @@ export function Header() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" asChild className="hidden md:flex">
             <Link href="/search">
@@ -116,8 +119,9 @@ export function Header() {
               <span className="sr-only">Search</span>
             </Link>
           </Button>
+
           <ModeToggle />
-          
+
           {user ? (
             <>
               <Button asChild variant="default" size="sm" className="hidden md:inline-flex">
@@ -126,13 +130,18 @@ export function Header() {
                   Add Server
                 </Link>
               </Button>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar_url || ''} alt={user.username} />
-                      <AvatarFallback>{user.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarImage
+                        src={user.user_metadata?.avatar_url || ''}
+                        alt={user.user_metadata?.full_name || 'User'}
+                      />
+                      <AvatarFallback>
+                        {user.user_metadata?.full_name?.substring(0, 2).toUpperCase() || 'US'}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -170,7 +179,7 @@ export function Header() {
               Login with Discord
             </Button>
           )}
-          
+
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle menu</span>
