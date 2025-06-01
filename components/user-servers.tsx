@@ -4,9 +4,16 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -16,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog"
-import { ArrowUp, ExternalLink, PencilLine, Trash, Users } from 'lucide-react'
+import { ArrowUp, ExternalLink, PencilLine, Trash, Users, Plus } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
@@ -30,7 +37,7 @@ export function UserServers({ userId }: UserServersProps) {
   const [bumpingServer, setBumpingServer] = useState<string | null>(null)
   const [serverToDelete, setServerToDelete] = useState<string | null>(null)
   const [deletingServer, setDeletingServer] = useState(false)
-  
+
   useEffect(() => {
     async function fetchUserServers() {
       setLoading(true)
@@ -40,7 +47,7 @@ export function UserServers({ userId }: UserServersProps) {
           .select('*')
           .eq('owner_id', userId)
           .order('created_at', { ascending: false })
-        
+
         if (error) throw error
         setServers(data || [])
       } catch (error) {
@@ -50,11 +57,10 @@ export function UserServers({ userId }: UserServersProps) {
         setLoading(false)
       }
     }
-    
+
     fetchUserServers()
   }, [userId])
-  
-  // Demo servers for development
+
   const demoServers = [
     {
       id: '1',
@@ -76,29 +82,27 @@ export function UserServers({ userId }: UserServersProps) {
       icon_url: 'https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
       created_at: '2024-01-05T00:00:00Z'
     }
-  ];
-  
-  const displayServers = servers.length > 0 ? servers : demoServers;
-  
+  ]
+
+  const displayServers = servers.length > 0 ? servers : demoServers
+
   const handleBumpServer = async (serverId: string) => {
     setBumpingServer(serverId)
     try {
-      // Check if user has bumped this server in the last 12 hours
       const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
-      
+
       const { data: recentBumps } = await supabase
         .from('bump_logs')
         .select('*')
         .eq('user_id', userId)
         .eq('server_id', serverId)
         .gte('bumped_at', twelveHoursAgo)
-      
+
       if (recentBumps && recentBumps.length > 0) {
         toast.error('You can only bump a server once every 12 hours')
         return
       }
-      
-      // Log the bump
+
       await supabase
         .from('bump_logs')
         .insert({
@@ -106,18 +110,16 @@ export function UserServers({ userId }: UserServersProps) {
           server_id: serverId,
           bumped_at: new Date().toISOString()
         })
-      
-      // Update the server's last_bumped_at time
+
       await supabase
         .from('servers')
         .update({ last_bumped_at: new Date().toISOString() })
         .eq('id', serverId)
-      
+
       toast.success('Server bumped successfully!')
-      
-      // Update the local state to reflect the change
-      setServers(servers.map(server => 
-        server.id === serverId 
+
+      setServers(servers.map(server =>
+        server.id === serverId
           ? { ...server, last_bumped_at: new Date().toISOString() }
           : server
       ))
@@ -128,10 +130,10 @@ export function UserServers({ userId }: UserServersProps) {
       setBumpingServer(null)
     }
   }
-  
+
   const handleDeleteServer = async () => {
     if (!serverToDelete) return
-    
+
     setDeletingServer(true)
     try {
       await supabase
@@ -139,7 +141,7 @@ export function UserServers({ userId }: UserServersProps) {
         .delete()
         .eq('id', serverToDelete)
         .eq('owner_id', userId)
-      
+
       toast.success('Server deleted successfully!')
       setServers(servers.filter(server => server.id !== serverToDelete))
     } catch (error) {
@@ -150,7 +152,7 @@ export function UserServers({ userId }: UserServersProps) {
       setServerToDelete(null)
     }
   }
-  
+
   if (loading) {
     return (
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -174,7 +176,7 @@ export function UserServers({ userId }: UserServersProps) {
       </div>
     )
   }
-  
+
   if (displayServers.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-10 text-center">
@@ -191,7 +193,7 @@ export function UserServers({ userId }: UserServersProps) {
       </div>
     )
   }
-  
+
   return (
     <>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -203,7 +205,7 @@ export function UserServers({ userId }: UserServersProps) {
                   <CardTitle className="flex items-center gap-2">
                     {server.name}
                     {!server.is_approved && (
-                      <Badge variant="outline\" className="ml-1">Pending</Badge>
+                      <Badge variant="outline" className="ml-1">Pending</Badge>
                     )}
                   </CardTitle>
                   <CardDescription className="flex items-center">
@@ -240,8 +242,8 @@ export function UserServers({ userId }: UserServersProps) {
                     View
                   </Link>
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   disabled={!server.is_approved || bumpingServer === server.id}
                   onClick={() => handleBumpServer(server.id)}
@@ -265,8 +267,8 @@ export function UserServers({ userId }: UserServersProps) {
                     Edit
                   </Link>
                 </Button>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => setServerToDelete(server.id)}
@@ -279,7 +281,7 @@ export function UserServers({ userId }: UserServersProps) {
           </Card>
         ))}
       </div>
-      
+
       <AlertDialog open={!!serverToDelete} onOpenChange={(open) => !open && setServerToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -290,16 +292,7 @@ export function UserServers({ userId }: UserServersProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDeleteServer}
               disabled={deletingServer}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deletingServer ? 'Deleting...' : 'Delete Server'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  )
-}
+              className="bg-destructive
