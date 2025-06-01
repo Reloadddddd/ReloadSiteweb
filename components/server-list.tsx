@@ -50,7 +50,7 @@ export function ServerList() {
         } else if (sort === 'new') {
           query = query.order('created_at', { ascending: false })
         } else if (sort === 'bumped') {
-          query = query.order('last_bumped_at', { ascending: false, nullsLast: true })
+          query = query.order('last_bumped_at', { ascending: false })
         }
         
         const { data, error } = await query.limit(20)
