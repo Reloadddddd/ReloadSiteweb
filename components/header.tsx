@@ -120,7 +120,7 @@ export function Header() {
           
           {user ? (
             <>
-              <Button asChild variant="default\" size="sm\" className="hidden md:inline-flex">
+              <Button asChild variant="default" size="sm" className="hidden md:inline-flex">
                 <Link href="/servers/add">
                   <Plus className="mr-2 h-4 w-4" />
                   Add Server
