@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -22,7 +22,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle
-} from "@/components/ui/alert-dialog"
+} from '@/components/ui/alert-dialog'
 import { ArrowUp, ExternalLink, PencilLine, Trash, Users, Plus } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -60,31 +60,6 @@ export function UserServers({ userId }: UserServersProps) {
 
     fetchUserServers()
   }, [userId])
-
-  const demoServers = [
-    {
-      id: '1',
-      name: 'My Gaming Community',
-      description: 'A place for gamers to connect and play together.',
-      member_count: 1250,
-      tags: ['Gaming', 'Community'],
-      is_approved: true,
-      icon_url: 'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      created_at: '2023-12-15T00:00:00Z'
-    },
-    {
-      id: '2',
-      name: 'Coding Help Center',
-      description: 'Get help with your programming questions from experienced developers.',
-      member_count: 785,
-      tags: ['Programming', 'Technology', 'Education'],
-      is_approved: false,
-      icon_url: 'https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      created_at: '2024-01-05T00:00:00Z'
-    }
-  ]
-
-  const displayServers = servers.length > 0 ? servers : demoServers
 
   const handleBumpServer = async (serverId: string) => {
     setBumpingServer(serverId)
@@ -177,7 +152,7 @@ export function UserServers({ userId }: UserServersProps) {
     )
   }
 
-  if (displayServers.length === 0) {
+  if (servers.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-10 text-center">
         <h3 className="mb-2 text-xl font-semibold">No servers added yet</h3>
@@ -197,7 +172,7 @@ export function UserServers({ userId }: UserServersProps) {
   return (
     <>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {displayServers.map((server) => (
+        {servers.map((server) => (
           <Card key={server.id} className="overflow-hidden">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -282,7 +257,12 @@ export function UserServers({ userId }: UserServersProps) {
         ))}
       </div>
 
-      <AlertDialog open={!!serverToDelete} onOpenChange={(open) => !open && setServerToDelete(null)}>
+      <AlertDialog
+        open={!!serverToDelete}
+        onOpenChange={(open) => {
+          if (!open) setServerToDelete(null)
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -295,4 +275,13 @@ export function UserServers({ userId }: UserServersProps) {
             <AlertDialogAction
               onClick={handleDeleteServer}
               disabled={deletingServer}
-              className="bg-destructive
+              className="bg-destructive text-white"
+            >
+              {deletingServer ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  )
+}
